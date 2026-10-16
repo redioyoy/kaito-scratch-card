@@ -196,5 +196,40 @@ canvas.addEventListener("pointerup",()=>drawing=false);
 canvas.addEventListener("pointercancel",()=>drawing=false);
 paintCover();
 </script>
+const cards = document.querySelectorAll(".card");
+let chosenCard = null;
+
+cards.forEach(card => {
+  card.addEventListener("click", () => {
+    if (chosenCard !== null) return;
+
+    chosenCard = card;
+    card.classList.add("active");
+    card.classList.remove("selectable");
+
+    cards.forEach(otherCard => {
+      if (otherCard !== card) {
+        otherCard.classList.add("locked");
+        otherCard.classList.remove("selectable");
+      }
+    });
+
+    const hint = card.querySelector(".hint");
+    if (hint) hint.textContent = "✨ Gosok kartu pilihanmu!";
+
+    const canvas = card.querySelector("canvas");
+    if (canvas) {
+      canvas.style.pointerEvents = "auto";
+    }
+  });
+});
+
+cards.forEach(card => {
+  const canvas = card.querySelector("canvas");
+  if (!canvas) return;
+
+  canvas.style.pointerEvents = "none";
+});
+
 </body>
 </html>
