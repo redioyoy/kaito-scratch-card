@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaito's Scratch Cards</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #10152f, #30245b);
+  color: white;
+  text-align: center;
+  min-height: 100vh;
+  padding: 35px 16px;
+}
+h1 { color: #9ce7ff; font-size: 2rem; }
+.subtitle { color: #ddd9ff; line-height: 1.6; }
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 35px auto;
+  max-width: 900px;
+}
+.card {
+  width: 250px;
+  padding: 12px;
+  border: 2px solid #8c7cff;
+  border-radius: 18px;
+  background: #201b43;
+  box-shadow: 0 8px 25px #080b2380;
+}
+.prize {
+  height: 180px;
+  display: grid;
+  place-items: center;
+  background: #fff0c9;
+  color: #28204d;
+  border-radius: 12px;
+  font-size: 21px;
+  font-weight: bold;
+  padding: 10px;
+}
+.scratch-area {
+  position: relative;
+  height: 180px;
+  margin-top: 10px;
+  border-radius: 12px;
+  overflow: hidden;
+  touch-action: none;
+}
+.scratch-area .prize {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+}
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+.hint { color: #c9c3ff; font-size: 13px; }
+footer { color: #c9c3ff; font-size: 12px; margin-top: 30px; }
+</style>
+</head>
+<body>
+<h1>✨ Kaito's Scratch Cards ✨</h1>
+<p class="subtitle">
+  Pick a card and scratch to reveal its demo prize!<br>
+  Setiap kartu memiliki hadiah demo yang tetap.
+</p>
+
+<div class="cards">
+  <div class="card">
+    <h3>Card 01</h3>
+    <div class="scratch-area">
+      <div class="prize">🎨<br>VTuber Model<br>Demo Prize</div>
+      <canvas aria-label="Scratch to reveal demo prize"></canvas>
+    </div>
+    <p class="hint">Gosok bagian atas kartu!</p>
+  </div>
+
+  <div class="card">
+    <h3>Card 02</h3>
+    <div class="scratch-area">
+      <div class="prize">🖌️<br>Half-Body Art<br>Demo Prize</div>
+      <canvas aria-label="Scratch to reveal demo prize"></canvas>
+    </div>
+    <p class="hint">Gosok bagian atas kartu!</p>
+  </div>
+
+  <div class="card">
+    <h3>Card 03</h3>
+    <div class="scratch-area">
+      <div class="prize">🌟<br>Chibi Illustration<br>Demo Prize</div>
+      <canvas aria-label="Scratch to reveal demo prize"></canvas>
+    </div>
+    <p class="hint">Gosok bagian atas kartu!</p>
+  </div>
+</div>
+
+<footer>
+  Interactive demo only · No real lottery or prize claims
+</footer>
+
+<script>
+document.querySelectorAll("canvas").forEach(canvas => {
+  const ctx = canvas.getContext("2d");
+  let scratching = false;
+
+  function setup() {
+    const rect = canvas.getBoundingClientRect();
+    const scale = window.devicePixelRatio || 1;
+    canvas.width = rect.width * scale;
+    canvas.height = rect.height * scale;
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "#a8b6d8";
+    ctx.fillRect(0, 0, rect.width, rect.height);
+
+    ctx.fillStyle = "#29234e";
+    ctx.textAlign = "center";
+    ctx.font = "bold 20px Arial";
+    ctx.fillText("SCRATCH HERE", rect.width / 2, rect.height / 2 - 5);
+    ctx.font = "26px Arial";
+    ctx.fillText("✨ ✨ ✨", rect.width / 2, rect.height / 2 + 30);
+  }
+
+  function scratch(event) {
+    if (!scratching) return;
+    event.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.beginPath();
+    ctx.arc(x, y, 22, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  canvas.addEventListener("pointerdown", event => {
+    scratching = true;
+    canvas.setPointerCapture(event.pointerId);
+    scratch(event);
+  });
+  canvas.addEventListener("pointermove", scratch);
+  canvas.addEventListener("pointerup", () => scratching = false);
+  canvas.addEventListener("pointercancel", () => scratching = false);
+
+  setup();
+});
+</script>
+</body>
+</html>
