@@ -3,159 +3,198 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kaito's Scratch Cards</title>
 <style>
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #10152f, #30245b);
-  color: white;
-  text-align: center;
-  min-height: 100vh;
-  padding: 35px 16px;
+*{box-sizing:border-box}
+:root{--cyan:#91e8ff;--purple:#9d8bff;--night:#10152e}
+body{
+ margin:0;min-height:100vh;padding:34px 18px;
+ font-family:Arial,sans-serif;color:#fff;text-align:center;
+ background:
+ radial-gradient(ellipse at 15% 10%,#35477b88,transparent 35%),
+ radial-gradient(ellipse at 90% 70%,#593b8580,transparent 40%),
+ linear-gradient(135deg,#0b1025,#211b45 65%,#101a37);
+ overflow-x:hidden
 }
-h1 { color: #9ce7ff; font-size: 2rem; }
-.subtitle { color: #ddd9ff; line-height: 1.6; }
-.cards {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin: 35px auto;
-  max-width: 900px;
+body:before{
+ content:"✦  ·    ✧       ·  ✦      ·       ✧";
+ position:fixed;inset:12px 0 auto;
+ color:#b7dfff;letter-spacing:18px;opacity:.45;
+ pointer-events:none;font-size:20px
 }
-.card {
-  width: 250px;
-  padding: 12px;
-  border: 2px solid #8c7cff;
-  border-radius: 18px;
-  background: #201b43;
-  box-shadow: 0 8px 25px #080b2380;
+header{max-width:850px;margin:10px auto 32px}
+h1{
+ font-size:clamp(30px,5vw,48px);margin:0 0 14px;
+ color:var(--cyan);text-shadow:0 0 18px #56cfff80
 }
-.prize {
-  height: 180px;
-  display: grid;
-  place-items: center;
-  background: #fff0c9;
-  color: #28204d;
-  border-radius: 12px;
-  font-size: 21px;
-  font-weight: bold;
-  padding: 10px;
+.subtitle{line-height:1.7;color:#dedfff;margin:0}
+.tag{
+ display:inline-block;margin-top:14px;padding:7px 15px;
+ border:1px solid #9d8bff77;border-radius:99px;
+ color:#dcd4ff;background:#ffffff08;font-size:12px
 }
-.scratch-area {
-  position: relative;
-  height: 180px;
-  margin-top: 10px;
-  border-radius: 12px;
-  overflow: hidden;
-  touch-action: none;
+.cards{
+ display:flex;justify-content:center;align-items:stretch;
+ flex-wrap:wrap;gap:22px;max-width:950px;margin:auto
 }
-.scratch-area .prize {
-  position: absolute;
-  inset: 0;
-  height: 100%;
+.card{
+ position:relative;width:270px;padding:16px;
+ border:1px solid #9d8bff88;border-radius:22px;
+ background:linear-gradient(150deg,#282653eF,#171b3bf5);
+ box-shadow:0 14px 35px #0004;
+ transition:transform .2s,border-color .2s
 }
-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  cursor: crosshair;
+.card.active{
+ border:2px solid #a6edff;
+ box-shadow:0 0 10px #70cfff88,0 0 30px #8272ff44
 }
-.hint { color: #c9c3ff; font-size: 13px; }
-footer { color: #c9c3ff; font-size: 12px; margin-top: 30px; }
+.card.active:hover{transform:translateY(-4px)}
+.card h2{font-size:19px;margin:4px 0 16px}
+.number{
+ display:inline-block;color:#dff8ff;
+ background:#7164c9;padding:6px 13px;border-radius:99px
+}
+.scratch-area{
+ height:190px;position:relative;overflow:hidden;
+ border-radius:14px;background:#fff0c8
+}
+.prize{
+ position:absolute;inset:0;display:flex;
+ flex-direction:column;align-items:center;justify-content:center;
+ gap:8px;color:#29204f;font-weight:bold;font-size:21px;
+ line-height:1.3;padding:12px
+}
+.prize .emoji{font-size:34px}
+canvas{
+ position:absolute;inset:0;width:100%;height:100%;
+ touch-action:none;cursor:crosshair
+}
+.hint{font-size:12px;color:#d7d2ff;margin:14px 0 2px}
+.locked{
+ filter:saturate(.5);opacity:.72
+}
+.locked .scratch-area{
+ background:linear-gradient(135deg,#626b8b,#333955);
+ display:flex;align-items:center;justify-content:center;
+ color:#fff;flex-direction:column;gap:12px
+}
+.lock-icon{font-size:44px}
+.locked-note{font-size:14px;line-height:1.5;color:#e0e2ff}
+footer{
+ max-width:650px;margin:32px auto 0;padding:12px;
+ border:1px solid #a89aff66;border-radius:99px;
+ color:#dcd8ff;font-size:12px
+}
+@media(max-width:600px){
+ body{padding:26px 14px}
+ .cards{gap:18px}
+ .card{width:min(100%,340px)}
+ .scratch-area{height:185px}
+ footer{border-radius:16px;line-height:1.7}
+}
 </style>
 </head>
 <body>
-<h1>✨ Kaito's Scratch Cards ✨</h1>
-<p class="subtitle">
-  Pick a card and scratch to reveal its demo prize!<br>
-  Setiap kartu memiliki hadiah demo yang tetap.
-</p>
+<header>
+ <h1>✦ Kaito's Scratch Cards ✦</h1>
+ <p class="subtitle">
+  Scratch the glowing card to reveal its demo prize!<br>
+  Gosok kartu aktif untuk melihat hadiah demo.
+ </p>
+ <span class="tag">✧ A little magic made by Kaito ✧</span>
+</header>
 
-<div class="cards">
-  <div class="card">
-    <h3>Card 01</h3>
-    <div class="scratch-area">
-      <div class="prize">🎨<br>VTuber Model<br>Demo Prize</div>
-      <canvas aria-label="Scratch to reveal demo prize"></canvas>
-    </div>
-    <p class="hint">Gosok bagian atas kartu!</p>
+<main class="cards">
+ <section class="card active">
+  <h2><span class="number">✦ Card 01 ✦</span></h2>
+  <div class="scratch-area">
+   <div class="prize">
+    <span class="emoji">🎨</span>
+    <span>VTuber Model</span>
+    <span>Demo Prize</span>
+   </div>
+   <canvas aria-label="Gosok kartu demo pertama"></canvas>
   </div>
+  <p class="hint">✧ Gosok di sini ✧</p>
+ </section>
 
-  <div class="card">
-    <h3>Card 02</h3>
-    <div class="scratch-area">
-      <div class="prize">🖌️<br>Half-Body Art<br>Demo Prize</div>
-      <canvas aria-label="Scratch to reveal demo prize"></canvas>
-    </div>
-    <p class="hint">Gosok bagian atas kartu!</p>
+ <section class="card locked">
+  <h2><span class="number">Card 02</span></h2>
+  <div class="scratch-area">
+   <div class="prize">
+    <span class="emoji">🖌️</span>
+    <span>Half-Body Art</span>
+    <span>Demo Prize</span>
+   </div>
+   <div class="lock-icon">🔒</div>
+   <div class="locked-note">Card locked<br>Not available in this demo</div>
   </div>
+  <p class="hint">🔒 Tidak aktif</p>
+ </section>
 
-  <div class="card">
-    <h3>Card 03</h3>
-    <div class="scratch-area">
-      <div class="prize">🌟<br>Chibi Illustration<br>Demo Prize</div>
-      <canvas aria-label="Scratch to reveal demo prize"></canvas>
-    </div>
-    <p class="hint">Gosok bagian atas kartu!</p>
+ <section class="card locked">
+  <h2><span class="number">Card 03</span></h2>
+  <div class="scratch-area">
+   <div class="prize">
+    <span class="emoji">🌟</span>
+    <span>Chibi Illustration</span>
+    <span>Demo Prize</span>
+   </div>
+   <div class="lock-icon">🔒</div>
+   <div class="locked-note">Card locked<br>Not available in this demo</div>
   </div>
-</div>
+  <p class="hint">🔒 Tidak aktif</p>
+ </section>
+</main>
 
 <footer>
-  Interactive demo only · No real lottery or prize claims
+ ✦ Interactive demo only · No real lottery or prize claims ✦
 </footer>
 
 <script>
-document.querySelectorAll("canvas").forEach(canvas => {
-  const ctx = canvas.getContext("2d");
-  let scratching = false;
+const canvas=document.querySelector(".card.active canvas");
+const ctx=canvas.getContext("2d");
+let drawing=false;
 
-  function setup() {
-    const rect = canvas.getBoundingClientRect();
-    const scale = window.devicePixelRatio || 1;
-    canvas.width = rect.width * scale;
-    canvas.height = rect.height * scale;
-    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+function paintCover(){
+ const rect=canvas.getBoundingClientRect();
+ if(!rect.width||!rect.height)return;
+ const scale=window.devicePixelRatio||1;
+ canvas.width=rect.width*scale;
+ canvas.height=rect.height*scale;
+ ctx.setTransform(scale,0,0,scale,0,0);
+ ctx.globalCompositeOperation="source-over";
+ ctx.fillStyle="#aab7d8";
+ ctx.fillRect(0,0,rect.width,rect.height);
 
-    ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "#a8b6d8";
-    ctx.fillRect(0, 0, rect.width, rect.height);
-
-    ctx.fillStyle = "#29234e";
-    ctx.textAlign = "center";
-    ctx.font = "bold 20px Arial";
-    ctx.fillText("SCRATCH HERE", rect.width / 2, rect.height / 2 - 5);
-    ctx.font = "26px Arial";
-    ctx.fillText("✨ ✨ ✨", rect.width / 2, rect.height / 2 + 30);
-  }
-
-  function scratch(event) {
-    if (!scratching) return;
-    event.preventDefault();
-    const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    ctx.globalCompositeOperation = "destination-out";
-    ctx.beginPath();
-    ctx.arc(x, y, 22, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  canvas.addEventListener("pointerdown", event => {
-    scratching = true;
-    canvas.setPointerCapture(event.pointerId);
-    scratch(event);
-  });
-  canvas.addEventListener("pointermove", scratch);
-  canvas.addEventListener("pointerup", () => scratching = false);
-  canvas.addEventListener("pointercancel", () => scratching = false);
-
-  setup();
+ ctx.fillStyle="#2c315b";
+ ctx.textAlign="center";
+ ctx.font="bold 20px Arial";
+ ctx.fillText("SCRATCH HERE",rect.width/2,rect.height/2-5);
+ ctx.font="26px Arial";
+ ctx.fillText("✦  ✧  ✦",rect.width/2,rect.height/2+30);
+}
+function scratch(event){
+ if(!drawing)return;
+ event.preventDefault();
+ const rect=canvas.getBoundingClientRect();
+ const x=event.clientX-rect.left;
+ const y=event.clientY-rect.top;
+ ctx.globalCompositeOperation="destination-out";
+ ctx.beginPath();
+ ctx.arc(x,y,24,0,Math.PI*2);
+ ctx.fill();
+}
+canvas.addEventListener("pointerdown",event=>{
+ drawing=true;
+ canvas.setPointerCapture(event.pointerId);
+ scratch(event);
 });
+canvas.addEventListener("pointermove",scratch);
+canvas.addEventListener("pointerup",()=>drawing=false);
+canvas.addEventListener("pointercancel",()=>drawing=false);
+paintCover();
 </script>
 </body>
 </html>
